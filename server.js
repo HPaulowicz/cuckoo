@@ -5,17 +5,14 @@ const server = http.createServer(app)
 const socket = require('socket.io')
 const io = socket(server)
 const username = require('username-generator')
-const path = require('path')
-
-app.use(express.static('./client/build'));
-
-app.get('*', (req,res)=>{
-    res.sendFile(path.resolve(__dirname, "client","build","index.html"));
-})
 
 const users={}
 
 io.on('connection', socket => {
+    const {
+        handshake: { query: { jwt, callId } }
+    } = socket;
+    console.log(jwt, callId);
     //generate username against a socket connection and store it
     const userid=username.generateUsername('-')
     if(!users[userid]){
